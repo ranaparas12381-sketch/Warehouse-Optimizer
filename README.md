@@ -6,128 +6,118 @@ sdk: docker
 app_port: 7860
 ---
 
-WAREHOUSE INVENTORY OPTIMIZATION SYSTEM
+# Warehouse Optimizer
 
-A sophisticated reinforcement learning environment for warehouse inventory management and optimization.
+Warehouse Optimizer is an OpenEnv-compatible warehouse inventory environment for evaluating replenishment policies under deterministic, stochastic, and disruption-aware operating conditions.
 
-DESCRIPTION
+The project exposes a simple HTTP environment server for hackathon validation and agent integration, while also keeping the underlying simulation modules and dashboard code available in the repository.
 
-This project implements an advanced simulation environment for warehouse inventory optimization using state of the art reinforcement learning techniques and operations research methodologies. The system provides realistic modeling of multi SKU logistics operations including demand forecasting, capacity management, and cost optimization.
+## Overview
 
-KEY FEATURES
+The environment models multi-SKU warehouse operations with:
 
-* Multi SKU inventory management with configurable complexity levels
-* Realistic demand modeling with seasonality and trend analysis
-* Stochastic supplier lead time simulation
-* Comprehensive cost optimization including holding costs, stockout penalties, and ordering expenses
-* Interactive web dashboard for real time visualization and analysis
-* Configurable reward functions with multiple optimization objectives
-* Three difficulty levels for progressive learning and evaluation
+- inventory position tracking
+- stochastic demand generation
+- supplier lead times
+- holding, ordering, and stockout costs
+- capacity constraints
+- task-based difficulty levels
 
-TECHNICAL STACK
+Available tasks:
 
-* Python 3.11
-* Streamlit for interactive web interface
-* Plotly for advanced data visualization
-* Pydantic for robust data validation
-* NumPy and Pandas for numerical computation
-* Docker for containerized deployment
+- `easy`: single-SKU deterministic replenishment
+- `medium`: multi-SKU stochastic replenishment
+- `hard`: disruption-aware warehouse optimization
 
-QUICK START
+## Repository Structure
 
-Prerequisites
+- `app.py`: FastAPI server exposing `/reset`, `/step`, `/state`, and `/health`
+- `inference.py`: baseline policy client for interacting with the HTTP environment
+- `openenv.yaml`: OpenEnv submission metadata
+- `requirements.txt`: root runtime dependencies for Docker and Hugging Face Spaces
+- `warehouse_openenv/env`: simulation engine and state models
+- `warehouse_openenv/tasks`: task-specific environment configurations
+- `warehouse_openenv/graders`: evaluation logic
+- `warehouse_openenv/baseline`: local baseline simulation utilities
+- `warehouse_openenv/dashboard`: Streamlit dashboard code retained for local exploration
 
-* Python 3.11 or higher
-* pip package manager
-* Docker (optional for containerized deployment)
+## API Endpoints
 
-Installation
+The root service exposes the following endpoints:
 
-Clone the repository and install dependencies:
+- `GET /health`
+- `POST /reset`
+- `POST /step`
+- `GET /state`
+- `POST /state`
 
-git clone <repository-url>
-cd warehouse-optimization/warehouse_openenv
+Example reset request:
+
+```json
+{
+  "task": "medium",
+  "seed": 42
+}
+```
+
+Example step request:
+
+```json
+{
+  "session_id": "<session-id>",
+  "order_quantities": [10, 0, 5, 0, 2]
+}
+```
+
+## Local Development
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
-Running the Application
+Run the OpenEnv server locally:
 
-Launch the interactive dashboard:
+```bash
+uvicorn app:app --host 0.0.0.0 --port 7860
+```
 
-streamlit run dashboard/app.py
+Run the baseline client against the local server:
 
-The application will be available at http://localhost:8501
+```bash
+python inference.py --base-url http://127.0.0.1:7860 --task medium --seed 42
+```
 
-Running Baseline Simulations
+## Docker
 
-Execute baseline policy simulations from the command line:
+Build the container:
 
-python -m baseline.run_baseline --task medium --seed 42 --episodes 10
+```bash
+docker build -t warehouse-optimizer .
+```
 
-Available tasks: easy, medium, hard
+Run the container:
 
-DOCKER DEPLOYMENT
+```bash
+docker run -p 7860:7860 warehouse-optimizer
+```
 
-Local Docker Deployment
+## Deployment
 
-Build and run the Docker container:
+### Hugging Face Spaces
 
-docker build -t warehouse-optimization ./warehouse_openenv
-docker run -p 8501:8501 warehouse-optimization
+The repository is configured as a Docker Space and serves the OpenEnv HTTP API on port `7860`.
 
-Using Docker Compose
+### Render
 
-docker-compose up
+The repository also includes a Render blueprint in [render.yaml](D:/Download/WarehouseOptimization/render.yaml). Render should build from `warehouse_openenv/Dockerfile` with the service root directory left empty.
 
-DEPLOYMENT ON RENDER
+## Notes
 
-This application is configured for deployment on Render using the included render.yaml configuration file.
+- The OpenEnv submission flow uses the root `Dockerfile`, root `openenv.yaml`, and root `inference.py`.
+- The Streamlit dashboard is preserved in the repository for local visualization, but the production hackathon deployment runs the HTTP environment server.
 
-Steps for Render Deployment:
+## License
 
-1. Create a new Web Service on Render
-2. Connect your GitHub repository
-3. Render will automatically detect the render.yaml configuration in the repository root
-4. Click Create Web Service
-5. The application will be built and deployed automatically
-
-The Render blueprint is configured to build from `warehouse_openenv/Dockerfile` with `warehouse_openenv` as the Docker context, so the Render service root directory should be left empty.
-
-The render.yaml file contains all necessary configuration including environment variables and health check endpoints.
-
-SYSTEM ARCHITECTURE
-
-The project follows a modular architecture:
-
-* env: Core simulation engine and environment logic
-* tasks: Task definitions and difficulty configurations
-* graders: Performance evaluation and scoring systems
-* baseline: Reference implementations and heuristic policies
-* dashboard: Web interface and visualization components
-
-TASK DIFFICULTY LEVELS
-
-Easy: Single SKU with deterministic demand patterns
-Medium: Multiple SKUs with stochastic demand and variable lead times
-Hard: Full warehouse simulation with capacity constraints and demand disruptions
-
-PERFORMANCE METRICS
-
-The system evaluates performance across multiple dimensions:
-
-* Fulfillment rate: Percentage of demand successfully met
-* Cost efficiency: Optimization of holding and ordering costs
-* Stockout frequency: Minimization of inventory shortages
-* Service level: Overall reliability and customer satisfaction
-
-CONFIGURATION
-
-The system supports extensive configuration through:
-
-* Reward weight parameters for multi objective optimization
-* Task specific difficulty parameters
-* Random seed control for reproducible experiments
-* Episode length and simulation parameters
-
-CONTRIBUTING
-
-Contributions are welcome. Please ensure code follows the existing architecture patterns and includes appropriate tests.
+This project is released under the MIT License.
