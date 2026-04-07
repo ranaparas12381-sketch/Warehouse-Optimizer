@@ -1,0 +1,22 @@
+version = 1
+revision = 1
+requires-python = ">=3.10"
+
+[[package]]
+name = "warehouse-optimizer"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+  { name = "openenv-core" },
+  { name = "fastapi" },
+  { name = "uvicorn", extra = ["standard"] },
+  { name = "requests" },
+  { name = "streamlit" },
+  { name = "plotly" },
+  { name = "pydantic" },
+  { name = "numpy" },
+  { name = "pandas" },
+  { name = "scipy" },
+  { name = "click" },
+  { name = "pyyaml" },
+]

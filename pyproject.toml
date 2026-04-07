@@ -9,6 +9,7 @@ description = "Warehouse inventory optimization environment for OpenEnv."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+  "openenv-core>=0.2.0",
   "fastapi==0.115.0",
   "uvicorn[standard]==0.30.6",
   "requests==2.32.3",
@@ -22,5 +23,11 @@ dependencies = [
   "pyyaml==6.0.1",
 ]
 
+[project.scripts]
+server = "server.app:main"
+
 [tool.setuptools]
 py-modules = ["app", "inference"]
+
+[tool.setuptools.packages.find]
+include = ["server*"]
