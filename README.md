@@ -1,3 +1,12 @@
+---
+title: Warehouse Optimizer
+emoji: "📦"
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
+
 WAREHOUSE INVENTORY OPTIMIZATION SYSTEM
 
 A sophisticated reinforcement learning environment for warehouse inventory management and optimization.

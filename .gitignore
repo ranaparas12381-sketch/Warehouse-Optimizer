@@ -27,6 +27,8 @@ ENV/
 env/
 !warehouse_openenv/env/
 !warehouse_openenv/env/**
+warehouse_openenv/env/__pycache__/
+warehouse_openenv/env/__pycache__/**
 
 # IDEs
 .vscode/
