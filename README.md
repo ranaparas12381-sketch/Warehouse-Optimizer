@@ -117,7 +117,3 @@ The repository also includes a Render blueprint in [render.yaml](D:/Download/War
 
 - The OpenEnv submission flow uses the root `Dockerfile`, root `openenv.yaml`, and root `inference.py`.
 - The Streamlit dashboard is preserved in the repository for local visualization, but the production hackathon deployment runs the HTTP environment server.
-
-## License
-
-This project is released under the MIT License.
