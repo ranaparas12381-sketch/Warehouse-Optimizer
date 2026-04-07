@@ -78,9 +78,11 @@ Steps for Render Deployment:
 
 1. Create a new Web Service on Render
 2. Connect your GitHub repository
-3. Render will automatically detect the render.yaml configuration
+3. Render will automatically detect the render.yaml configuration in the repository root
 4. Click Create Web Service
 5. The application will be built and deployed automatically
+
+The Render blueprint is configured to build from `warehouse_openenv/Dockerfile` with `warehouse_openenv` as the Docker context, so the Render service root directory should be left empty.
 
 The render.yaml file contains all necessary configuration including environment variables and health check endpoints.
 

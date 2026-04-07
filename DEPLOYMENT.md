@@ -40,6 +40,9 @@ Render will automatically detect the render.yaml file. Verify the configuration:
 * Region: Select closest to your target audience
 * Branch: main (or your deployment branch)
 * Plan: Free
+* Dockerfile Path: ./warehouse_openenv/Dockerfile
+* Docker Context: ./warehouse_openenv
+* Root Directory: leave empty
 
 Step 5: Deploy
 
