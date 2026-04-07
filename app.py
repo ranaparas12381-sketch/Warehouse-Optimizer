@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -105,14 +106,151 @@ async def _read_json(request: Request) -> Dict[str, Any]:
     return body if isinstance(body, dict) else {}
 
 
-@app.get("/")
-def root() -> Dict[str, Any]:
-    return {
-        "name": "warehouse-inventory-optimization",
-        "status": "ok",
-        "available_tasks": list(TASK_FACTORIES.keys()),
-        "endpoints": ["/health", "/reset", "/step", "/state"],
+@app.get("/", response_class=HTMLResponse)
+def root() -> str:
+    return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Warehouse Optimizer</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --ink: #16202a;
+      --muted: #5f6b76;
+      --accent: #0b5ed7;
+      --line: #d6dde8;
+      --success: #1f7a4d;
     }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, #dbeafe 0, transparent 28%),
+        radial-gradient(circle at bottom right, #d1fae5 0, transparent 24%),
+        var(--bg);
+      color: var(--ink);
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 48px 20px 64px;
+    }
+    .hero, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(12, 23, 36, 0.06);
+    }
+    .hero {
+      padding: 36px;
+      margin-bottom: 22px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 2.2rem;
+      line-height: 1.1;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+    .status {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #e9f7ef;
+      color: var(--success);
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .panel {
+      padding: 22px;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+    }
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    code {
+      background: #eef3f8;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+      color: var(--accent);
+    }
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="status">Environment server online</div>
+      <h1>Warehouse Optimizer</h1>
+      <p>
+        This Space hosts the OpenEnv-compatible warehouse inventory optimization environment
+        used for hackathon evaluation. The human-facing dashboard is not served here; this
+        deployment is dedicated to the validator and API clients.
+      </p>
+    </section>
+    <section class="grid">
+      <div class="panel">
+        <h2>Available Tasks</h2>
+        <ul>
+          <li><code>easy</code> single-SKU deterministic replenishment</li>
+          <li><code>medium</code> multi-SKU stochastic replenishment</li>
+          <li><code>hard</code> disruption-aware warehouse optimization</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>API Endpoints</h2>
+        <ul>
+          <li><code>GET /health</code></li>
+          <li><code>POST /reset</code></li>
+          <li><code>POST /step</code></li>
+          <li><code>GET /state</code></li>
+          <li><code>POST /state</code></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Purpose</h2>
+        <ul>
+          <li>Hackathon validator target</li>
+          <li>OpenEnv-compatible environment server</li>
+          <li>Baseline client support via <code>inference.py</code></li>
+        </ul>
+      </div>
+    </section>
+    <div class="footer">
+      API status remains available at <code>/health</code>. Environment interactions should use
+      <code>/reset</code>, <code>/step</code>, and <code>/state</code>.
+    </div>
+  </div>
+</body>
+</html>
+"""
 
 
 @app.get("/health")
