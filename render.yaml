@@ -2,7 +2,7 @@ services:
   - type: web
     name: warehouse-optimization
     env: docker
-    dockerfilePath: ./warehouse_openenv/Dockerfile
+    dockerfilePath: ./Dockerfile
     dockerContext: ./warehouse_openenv
     plan: free
     healthCheckPath: /_stcore/health
